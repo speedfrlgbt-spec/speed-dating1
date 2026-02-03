@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speed Dating Pro</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <style>
+        /* Podstawowe style - pełny CSS w pliku style.css */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        .screen { display: none; min-height: 100vh; padding: 20px; }
+        .screen.active { display: block; }
+        .mode-container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+        .mode-header { text-align: center; margin-bottom: 40px; color: white; }
+        .mode-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-bottom: 40px; }
+        .mode-card { background: white; border-radius: 12px; padding: 30px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-block { width: 100%; }
+    </style>
+</head>
+<body>
+    <!-- Ekran wyboru trybu -->
+    <div id="mode-screen" class="screen active">
+        <div class="mode-container">
+            <div class="mode-header">
+                <div class="logo">
+                    <i class="fas fa-heart"></i>
+                    <h1>Speed Dating Pro</h1>
+                </div>
+                <p class="tagline">Znajdź swoją parę!</p>
+            </div>
+
+            <div class="mode-options">
+                <div class="mode-card">
+                    <div class="mode-icon">
+                        <i class="fas fa-user-friends"></i>
+                    </div>
+                    <h3>Uczestnik</h3>
+                    <p>Dołącz do wydarzenia i poznaj nowych ludzi</p>
+                    <button class="btn btn-primary btn-block mode-select-btn" data-mode="participant">
+                        <i class="fas fa-user-plus"></i> Zarejestruj się
+                    </button>
+                </div>
+
+                <div class="mode-card">
+                    <div class="mode-icon">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <h3>Organizator</h3>
+                    <p>Zarządzaj wydarzeniem i uczestnikami</p>
+                    <button class="btn btn-primary btn-block mode-select-btn" data-mode="admin">
+                        <i class="fas fa-cogs"></i> Panel administratora
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ekran rejestracji (ukryty na początku) -->
+    <div id="login-screen" class="screen">
+        <div class="login-container" style="max-width: 500px; margin: 0 auto; background: white; border-radius: 12px; padding: 40px;">
+            <h2>Rejestracja uczestnika</h2>
+            <form id="register-form">
+                <div style="margin-bottom: 20px;">
+                    <label for="username"><i class="fas fa-user"></i> Nazwa użytkownika</label>
+                    <input type="text" id="username" placeholder="Wprowadź swój nick" required style="width: 100%; padding: 10px; margin-top: 5px;">
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-user-plus"></i> Zarejestruj się
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Skrypty -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        // Minimalna, działająca aplikacja
+        class SpeedDatingApp {
+            constructor() {
+                console.log("Speed Dating Pro - działająca wersja");
+                this.initialize();
+            }
+
+            initialize() {
+                toastr.options = { positionClass: 'toast-top-right', timeOut: 3000 };
+                this.setupEventListeners();
+                this.showModeSelection();
+            }
+
+            showModeSelection() {
+                this.hideAllScreens();
+                document.getElementById('mode-screen').classList.add('active');
+            }
+
+            showRegistrationScreen() {
+                this.hideAllScreens();
+                document.getElementById('login-screen').classList.add('active');
+            }
+
+            hideAllScreens() {
+                document.querySelectorAll('.screen').forEach(screen => {
+                    screen.classList.remove('active');
+                });
+            }
+
+            setupEventListeners() {
+                // Przyciski wyboru trybu
+                document.querySelectorAll('.mode-select-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const mode = btn.dataset.mode;
+                        
+                        if (mode === 'participant') {
+                            this.showRegistrationScreen();
+                            toastr.success('Przechodzisz do rejestracji!');
+                        } else if (mode === 'admin') {
+                            // Symulacja panelu admina
+                            toastr.info('Panel administratora - funkcja w budowie');
+                            alert('Panel administratora\n\nMożesz:\n1. Zarządzać uczestnikami\n2. Generować pary\n3. Rozpoczynać rundy');
+                        }
+                    });
+                });
+
+                // Formularz rejestracji
+                document.getElementById('register-form')?.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const username = document.getElementById('username').value;
+                    if (username) {
+                        toastr.success('Zarejestrowano jako: ' + username);
+                        setTimeout(() => {
+                            alert('Witaj ' + username + '!\n\nAplikacja działa poprawnie.\nMożesz teraz rozwijać dalsze funkcje.');
+                        }, 1000);
+                    }
+                });
+            }
+        }
+
+        // Uruchom aplikację po załadowaniu strony
+        document.addEventListener('DOMContentLoaded', () => {
+            window.app = new SpeedDatingApp();
+        });
+    </script>
+</body>
+</html>
